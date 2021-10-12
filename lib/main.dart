@@ -8,9 +8,8 @@ import 'package:image_cropper/image_cropper.dart';
 void main() => runApp(MyApp());
 
 class BlendData {
-  BlendMode mode;
-  Color color;
-
+  BlendMode? mode;
+  Color? color;
   BlendData(BlendMode mode, Color color) {
     this.mode = mode;
     this.color = color;
@@ -31,7 +30,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -42,10 +41,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // BlendDataの作成
   final Map blendDataMap = {
-    "Original": BlendData(
-      null,
-      null,
-    ),
+    // "Original": BlendData(
+    //   null,
+    //   null,
+    // ),
     "Strong": BlendData(
       BlendMode.saturation,
       Color(0xFF00FFFF),
@@ -68,14 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   };
 
-  File _image;
-  BlendMode _mode;
-  Color _color;
+  File? _image;
+  BlendMode? _mode;
+  Color? _color;
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
 
     // メインの画像
     widgets.add(
@@ -87,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: _image == null
               ? Container()
               : Image.file(
-            _image,
+            _image!,
             color: _color,
             colorBlendMode: _mode,
           ),
@@ -146,11 +145,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future getImage(ImageSource imageSource) async {
-    var image = await ImagePicker.pickImage(source: imageSource);
+    var image = await ImagePicker().pickImage(source: imageSource);
 
     setState(
           () {
-        _image = image;
+        _image = image! as File;
       },
     );
   }
@@ -160,8 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    File croppedFile = await ImageCropper.cropImage(
-        sourcePath: _image.path,
+    File? croppedFile = await ImageCropper.cropImage(
+        sourcePath: _image!.path,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,
@@ -186,34 +185,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> createChangeBlendButtons() {
-    List<Widget> widgets = List<Widget>();
+    List<Widget> widgets = [];
 
     blendDataMap.forEach(
           (key, value) {
         widgets.add(
-          RaisedButton(
-            child: SizedBox(
+          SizedBox(
               height: 50,
               width: 50,
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: value.mode == null
-                    ? Image.file(
-                  _image,
-                )
-                    : Image.file(
-                  _image,
-                  color: value.color,
-                  colorBlendMode: value.mode,
+              child: ElevatedButton(
+                onPressed: () {
+                  selectedBlend(key);
+                },
+                child: Text(
+                  "1.Normal Button",
+                ),
+                style: ElevatedButton.styleFrom(
+                  side: BorderSide(
+                    color: Colors.black,
+                    width: 50,
+                  ),
                 ),
               ),
-            ),
-            color: Colors.white,
-            onPressed: () {
-              selectedBlend(key);
-            },
-          ),
-        );
+          ),        );
       },
     );
     return widgets;
