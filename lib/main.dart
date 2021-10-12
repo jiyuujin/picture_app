@@ -41,10 +41,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // BlendDataの作成
   final Map blendDataMap = {
-    // "Original": BlendData(
-    //   null,
-    //   null,
-    // ),
     "Strong": BlendData(
       BlendMode.saturation,
       Color(0xFF00FFFF),
