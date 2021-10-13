@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 
-void main() => runApp(MyApp());
+import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+
+void main() => runApp(const MyApp());
 
 class BlendData {
+  BlendData(this.mode, this.color);
   BlendMode? mode;
   Color? color;
-  BlendData(BlendMode mode, Color color) {
-    this.mode = mode;
-    this.color = color;
-  }
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,13 +24,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: MyHomePage(title: 'Picture'),
+      home: const MyHomePage(title: 'Picture'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -39,27 +39,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // BlendDataの作成
+  // ignore: strict_raw_type
   final Map blendDataMap = {
-    "Strong": BlendData(
+    'Strong': BlendData(
       BlendMode.saturation,
-      Color(0xFF00FFFF),
+      const Color(0xFF00FFFF),
     ),
-    "Sepia": BlendData(
+    'Sepia': BlendData(
       BlendMode.modulate,
-      Color(0xFFffdead),
+      const Color(0xFFffdead),
     ),
-    "Sunset": BlendData(
+    'Sunset': BlendData(
       BlendMode.colorBurn,
-      Color(0xFFf0e68c),
+      const Color(0xFFf0e68c),
     ),
-    "MagicHour": BlendData(
+    'MagicHour': BlendData(
       BlendMode.colorBurn,
-      Color(0xFFba55d3),
+      const Color(0xFFba55d3),
     ),
-    "Ocean": BlendData(
+    'Ocean': BlendData(
       BlendMode.colorBurn,
-      Color(0xFF00FFFF),
+      const Color(0xFF00FFFF),
     ),
   };
 
@@ -69,10 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    List<Widget> widgets = [];
+    final size = MediaQuery.of(context).size;
+    final widgets = <Widget>[];
 
-    // メインの画像
+    // ignore: cascade_invocations
     widgets.add(
       SizedBox(
         height: size.width,
@@ -82,49 +82,52 @@ class _MyHomePageState extends State<MyHomePage> {
           child: _image == null
               ? Container()
               : Image.file(
-            _image!,
-            color: _color,
-            colorBlendMode: _mode,
-          ),
+                  _image!,
+                  color: _color,
+                  colorBlendMode: _mode,
+                ),
         ),
       ),
     );
 
-    // 色調変更ボタン
+    // ignore: cascade_invocations
     widgets.add(
       _image == null
           ? Container(
-        height: 90,
-      )
-          : Container(
-        height: 90,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: createChangeBlendButtons(),
-        ),
-      ),
+              height: 90,
+            )
+          : SizedBox(
+              height: 90,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: createChangeBlendButtons(),
+              ),
+            ),
     );
 
-
-    // Utilityボタン
+    // ignore: cascade_invocations
     widgets.add(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           FloatingActionButton(
-            onPressed: (){getImage(ImageSource.gallery);},
-            tooltip: "画像を変更する",
-            child: Icon(Icons.attach_file),
+            onPressed: () {
+              getImage(ImageSource.gallery);
+            },
+            tooltip: '画像を変更する',
+            child: const Icon(Icons.attach_file),
           ),
           FloatingActionButton(
-            onPressed: (){getImage(ImageSource.camera);},
-            tooltip: "撮影",
-            child: Icon(Icons.camera),
+            onPressed: () {
+              getImage(ImageSource.camera);
+            },
+            tooltip: '撮影',
+            child: const Icon(Icons.camera),
           ),
           FloatingActionButton(
             onPressed: trimmingImage,
-            tooltip: "トリミング",
-            child: Icon(Icons.picture_in_picture),
+            tooltip: 'トリミング',
+            child: const Icon(Icons.picture_in_picture),
           ),
         ],
       ),
@@ -140,22 +143,22 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future getImage(ImageSource imageSource) async {
-    var image = await ImagePicker().pickImage(source: imageSource);
+  Future<dynamic> getImage(ImageSource imageSource) async {
+    final image = await ImagePicker().pickImage(source: imageSource);
 
     setState(
-          () {
+      () {
         _image = image! as File;
       },
     );
   }
 
-  Future trimmingImage() async {
+  Future<dynamic> trimmingImage() async {
     if (_image == null) {
       return;
     }
 
-    File? croppedFile = await ImageCropper.cropImage(
+    final croppedFile = await ImageCropper.cropImage(
         sourcePath: _image!.path,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
@@ -164,46 +167,46 @@ class _MyHomePageState extends State<MyHomePage> {
           CropAspectRatioPreset.ratio4x3,
           CropAspectRatioPreset.ratio16x9
         ],
-        androidUiSettings: AndroidUiSettings(
+        androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
-        iosUiSettings: IOSUiSettings(
-          minimumAspectRatio: 1.0,
-        )
-    );
+        iosUiSettings: const IOSUiSettings(
+          minimumAspectRatio: 1,
+        ));
 
     setState(() {
-      _image=croppedFile;
+      _image = croppedFile;
     });
   }
 
   List<Widget> createChangeBlendButtons() {
-    List<Widget> widgets = [];
+    final widgets = <Widget>[];
 
     blendDataMap.forEach(
-          (key, value) {
+      (key, value) {
         widgets.add(
           SizedBox(
-              height: 50,
-              width: 50,
-              child: ElevatedButton(
-                onPressed: () {
-                  selectedBlend(key);
-                },
-                child: Text(
-                  "1.Normal Button",
-                ),
-                style: ElevatedButton.styleFrom(
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 50,
-                  ),
+            height: 50,
+            width: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                selectedBlend(key);
+              },
+              style: ElevatedButton.styleFrom(
+                side: const BorderSide(
+                  color: Colors.black,
+                  width: 50,
                 ),
               ),
-          ),        );
+              child: const Text(
+                '1.Normal Button',
+              ),
+            ),
+          ),
+        );
       },
     );
     return widgets;
@@ -211,8 +214,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void selectedBlend(String value) {
     setState(
-          () {
-        BlendData blendData = blendDataMap[value];
+      () {
+        final BlendData blendData = blendDataMap[value];
         _mode = blendData.mode;
         _color = blendData.color;
       },
